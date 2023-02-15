@@ -14,10 +14,15 @@
      };
    },
    mounted() {
-     this.map = L.map("mapContainer").setView([46.05, 11.05], 5);
+     this.map = L.map("mapContainer", {
+       zoomControl: false
+     }).setView([46.05, 11.05], 5);
+
      L.tileLayer("http://{s}.tile.osm.org/{z}/{x}/{y}.png", {
-       attribution:
-        '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+     }).addTo(this.map);
+
+     L.control.zoom({
+       position: "bottomright"
      }).addTo(this.map);
    },
    onBeforeUnmount() {
