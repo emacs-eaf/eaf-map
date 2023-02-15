@@ -1,5 +1,8 @@
 <template>
-  <div id="mapContainer"></div>
+  <div
+    id="mapContainer"
+    class="h-full w-full">
+  </div>
 </template>
 
 <script>
@@ -15,14 +18,11 @@
    },
    mounted() {
      this.map = L.map("mapContainer", {
+       attributionControl: false,
        zoomControl: false
-     }).setView([46.05, 11.05], 5);
+     }).setView([39, 104], 5);
 
      L.tileLayer("http://{s}.tile.osm.org/{z}/{x}/{y}.png", {
-     }).addTo(this.map);
-
-     L.control.zoom({
-       position: "bottomright"
      }).addTo(this.map);
    },
    onBeforeUnmount() {
@@ -34,8 +34,4 @@
 </script>
 
 <style scoped>
- #mapContainer {
-   width: 100vw;
-   height: 100vh;
- }
 </style>
