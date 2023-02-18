@@ -1,3 +1,14 @@
 {
-    "vue_install": true
+  "pip": {
+    "linux": [
+      "geopy",
+    ],
+    "win32": [
+      "geopy",
+    ],
+    "darwin": [
+      "geopy",
+    ]
+  },
+  "vue_install": true
 }

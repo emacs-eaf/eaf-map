@@ -91,7 +91,8 @@
   (eaf-open "eaf-map" "map"))
 
 (defcustom eaf-map-keybinding
-  '(("<f12>" . "open_devtools"))
+  '(("<f12>" . "open_devtools")
+    ("a"     . "add_new_place"))
   "The keybinding of EAF Vue demo."
   :type 'cons)
 
