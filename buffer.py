@@ -46,6 +46,12 @@ class AppBuffer(BrowserBuffer):
             else:
                 handle_function()
 
+    def open_map(self):
+        pass
+
+    def save_map(self):
+        pass
+
     def add_new_place(self):
         self.send_input_message("Add new address: ", "add_new_place", "string")
 

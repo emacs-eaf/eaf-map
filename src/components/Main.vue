@@ -15,6 +15,7 @@
    data() {
      return {
        map: null,
+       places: [],
        markers: [],
        polyline: null,
        currentLatitude: 39,
@@ -59,6 +60,8 @@
      },
 
      addNewPlace(placeName, placeLongitude, placeLatitude) {
+       this.places.push([placeName, placeLongitude, placeLatitude]);
+
        const marker = L.marker([placeLatitude, placeLongitude]).addTo(this.map);
        this.markers.push(marker);
 
