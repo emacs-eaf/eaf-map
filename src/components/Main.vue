@@ -16,7 +16,9 @@
      return {
        map: null,
        markers: [],
-       polyline: null
+       polyline: null,
+       currentLatitude: 39,
+       currentLongitude: 104
      };
    },
    created() {
@@ -34,18 +36,29 @@
    mounted() {
      window.addNewPlace = this.addNewPlace;
 
-     this.map = L.map("mapContainer", {
-       attributionControl: false,
-       zoomControl: false
-     }).setView([39, 104], 5);
+     if (navigator.geolocation) {
+       navigator.geolocation.getCurrentPosition(position => {
+         this.currentLatitude = position.coords.latitude;
+         this.currentLongitude = position.coords.longitude;
+       });
 
-     L.tileLayer("http://{s}.tile.osm.org/{z}/{x}/{y}.png", {
-     }).addTo(this.map);
+       this.initMap();
+     } else {
+       this.initMap();
+     }
    },
    methods: {
-     addNewPlace(placeName, placeLongitude, placeLatitude) {
-       console.log(placeName, placeLatitude, placeLatitude);
+     initMap() {
+       this.map = L.map("mapContainer", {
+         attributionControl: false,
+         zoomControl: false
+       }).setView([this.currentLatitude, this.currentLongitude], 5);
 
+       L.tileLayer("http://{s}.tile.osm.org/{z}/{x}/{y}.png", {
+       }).addTo(this.map);
+     },
+
+     addNewPlace(placeName, placeLongitude, placeLatitude) {
        const marker = L.marker([placeLatitude, placeLongitude]).addTo(this.map);
        this.markers.push(marker);
 
