@@ -170,7 +170,7 @@
 
 <style scoped>
  ::v-deep .place-label {
-   color: #000;
+   color: #333;
    background-color: #FCF3CF;
    border-radius: 10px;
    display: flex;
@@ -183,7 +183,7 @@
  }
 
  ::v-deep .count-label {
-   color: #000;
+   color: #333;
    background-color: #FCF3CF;
    border-radius: 10px;
    display: flex;
