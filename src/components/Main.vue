@@ -121,7 +121,6 @@
              var legs = data.routes[0].legs;
              var waypoints = data.waypoints;
 
-             var infos = [];
              var info_len = waypoints.length - 1;
              for (let i = 0; i < info_len; i++) {
                const label = L.marker([

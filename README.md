@@ -10,3 +10,15 @@ This repository provides the EAF OpenStreetMap application for the [Emacs Applic
 (require 'eaf)
 (require 'eaf-map)
 ```
+
+### The keybinding of EAF Vue demo.
+
+| Key   | Event   |
+| :---- | :------ |
+| `<f12>` | open_devtools |
+| `a` | add_place |
+| `d` | delete_place |
+| `x` | sort_places |
+| `o` | open_map |
+| `s` | save_map |
+

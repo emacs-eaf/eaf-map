@@ -92,11 +92,11 @@
 
 (defcustom eaf-map-keybinding
   '(("<f12>" . "open_devtools")
+    ("a"     . "add_place")
+    ("d"     . "delete_place")
+    ("x"     . "sort_places")
     ("o"     . "open_map")
     ("s"     . "save_map")
-    ("d"     . "delete_place")
-    ("a"     . "add_place")
-    ("x"     . "sort_places")
     )
   "The keybinding of EAF Vue demo."
   :type 'cons)
