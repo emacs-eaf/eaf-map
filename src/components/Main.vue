@@ -19,7 +19,8 @@
        places: [],
        markers: [],
        labels: [],
-       labelStyle: "background-color: #FCF3CF;border-radius: 10px; display: flex; flex-direction: column; align-items: center; height: 100%; width: 100%; border: transparent;justify-content: center;",
+       placeLabelStyle: "background-color: #FCF3CF;border-radius: 10px; display: flex; flex-direction: column; align-items: center; height: 100%; width: 100%; border: transparent;justify-content: center;",
+       countLabelStyle: "background-color: #FCF3CF;border-radius: 10px; display: flex; flex-direction: column; padding-left: 10px; height: 100%; width: 100%; border: transparent;justify-content: center;",
        polyline: null,
        currentLatitude: 39,
        currentLongitude: 104
@@ -121,19 +122,33 @@
              var legs = data.routes[0].legs;
              var waypoints = data.waypoints;
 
-             var info_len = waypoints.length - 1;
-             for (let i = 0; i < info_len; i++) {
-               const label = L.marker([
-                 (waypoints[i].location[1] + waypoints[i + 1].location[1]) / 2,
-                 (waypoints[i].location[0] + waypoints[i + 1].location[0]) / 2
-               ], {
+             var infoLen = waypoints.length - 1;
+             var distanceCount = 0;
+             var durationCount = 0;
+             for (let i = 0; i < infoLen; i++) {
+               const label = L.marker([(waypoints[i].location[1] + waypoints[i + 1].location[1]) / 2,
+                                       (waypoints[i].location[0] + waypoints[i + 1].location[0]) / 2], {
                  icon: L.divIcon({
                    iconSize: [100, 50],
-                   html: "<div style='" + this.labelStyle + "'>" + "<div>" + (legs[i].distance / 1000).toFixed(1) + "公里" + "</div>" + "<div>" + " " + (legs[i].duration / 3600.0).toFixed(1) + "小时" + "</div>" + "</div>"
+                   html: "<div style='" + this.placeLabelStyle + "'>" + "<div>" + (legs[i].distance / 1000).toFixed(1) + "公里" + "</div>" + "<div>" + " " + (legs[i].duration / 3600.0).toFixed(1) + "小时" + "</div>" + "</div>"
                  })
                }).addTo(this.map);
                this.labels.push(label);
+
+               distanceCount += legs[i].distance;
+               durationCount += legs[i].duration;
              }
+
+             const label = L.marker(
+               [waypoints[0].location[1] - 0.5, waypoints[0].location[0]], {
+                  icon: L.divIcon({
+                    iconSize: [140, 50],
+                    className: "count-label",
+                    html: "<div style='" + this.countLabelStyle + "'>" + "<div>总里程: " + (distanceCount / 1000).toFixed(1) + "公里" + "</div>" + "<div>总耗时: " + " " + (durationCount / 3600.0).toFixed(1) + "小时" + "</div>" + "</div>"
+                 })
+               }).addTo(this.map);
+             this.labels.push(label);
+
 
              this.polyline = new L.Polyline(polyline.decode(data.routes[0].geometry), {color: '#3DA3B4'}).addTo(this.map);
              this.map.fitBounds(this.polyline.getBounds());
