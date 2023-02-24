@@ -19,8 +19,6 @@
        places: [],
        markers: [],
        labels: [],
-       placeLabelStyle: "background-color: #FCF3CF;border-radius: 10px; display: flex; flex-direction: column; align-items: center; height: 100%; width: 100%; border: transparent;justify-content: center;",
-       countLabelStyle: "background-color: #FCF3CF;border-radius: 10px; display: flex; flex-direction: column; padding-left: 10px; height: 100%; width: 100%; border: transparent;justify-content: center;",
        polyline: null,
        currentLatitude: 39,
        currentLongitude: 104
@@ -130,7 +128,8 @@
                                        (waypoints[i].location[0] + waypoints[i + 1].location[0]) / 2], {
                  icon: L.divIcon({
                    iconSize: [100, 50],
-                   html: "<div style='" + this.placeLabelStyle + "'>" + "<div>" + (legs[i].distance / 1000).toFixed(1) + "公里" + "</div>" + "<div>" + " " + (legs[i].duration / 3600.0).toFixed(1) + "小时" + "</div>" + "</div>"
+                   className: "place-label",
+                   html: "<div>" + "<div>" + (legs[i].distance / 1000).toFixed(1) + "公里" + "</div>" + "<div>" + " " + (legs[i].duration / 3600.0).toFixed(1) + "小时" + "</div>" + "</div>"
                  })
                }).addTo(this.map);
                this.labels.push(label);
@@ -144,7 +143,7 @@
                   icon: L.divIcon({
                     iconSize: [140, 50],
                     className: "count-label",
-                    html: "<div style='" + this.countLabelStyle + "'>" + "<div>总里程: " + (distanceCount / 1000).toFixed(1) + "公里" + "</div>" + "<div>总耗时: " + " " + (durationCount / 3600.0).toFixed(1) + "小时" + "</div>" + "</div>"
+                    html: "<div>" + "<div>总里程: " + (distanceCount / 1000).toFixed(1) + "公里" + "</div>" + "<div>总耗时: " + " " + (durationCount / 3600.0).toFixed(1) + "小时" + "</div>" + "</div>"
                  })
                }).addTo(this.map);
              this.labels.push(label);
@@ -169,5 +168,31 @@
    background: transparent !important;
    border: 1px solid #EDDA8F !important;
    border-radius: 10px !important;
+ }
+
+ ::v-deep .place-label {
+   color: #000;
+   background-color: #FCF3CF;
+   border-radius: 10px;
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   height: 100%;
+   width: 100%;
+   border: transparent;
+   justify-content: center;
+ }
+
+ ::v-deep .count-label {
+   color: #000;
+   background-color: #FCF3CF;
+   border-radius: 10px;
+   display: flex;
+   flex-direction: column;
+   padding-left: 10px;
+   height: 100%;
+   width: 100%;
+   border: transparent;
+   justify-content: center;
  }
 </style>
