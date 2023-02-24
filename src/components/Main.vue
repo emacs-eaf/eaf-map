@@ -6,6 +6,7 @@
 </template>
 
 <script>
+ import { QWebChannel } from "qwebchannel";
  import "leaflet/dist/leaflet.css";
  import polyline from 'polyline';
  import L from "leaflet";
@@ -22,7 +23,21 @@
        currentLongitude: 104
      };
    },
+   watch: {
+     places: {
+       // eslint-disable-next-line no-unused-vars
+       handler: function(val, oldVal) {
+         window.pyobject.vue_update_places(val);
+       },
+       deep: true
+     }
+   },
    created() {
+     // eslint-disable-next-line no-undef
+     new QWebChannel(qt.webChannelTransport, channel => {
+       window.pyobject = channel.objects.pyobject;
+     });
+
      L.Marker.prototype.options.icon = L.icon({
        iconRetinaUrl: require("leaflet/dist/images/marker-icon-2x.png"),
        iconUrl: require("leaflet/dist/images/marker-icon.png"),

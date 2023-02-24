@@ -33,6 +33,10 @@ class AppBuffer(BrowserBuffer):
 
         self.threads = []
 
+        self.vue_places = []
+
+        self.save_path = ""
+
     def handle_input_response(self, callback_tag, result_content):
         from inspect import signature
 
@@ -46,11 +50,18 @@ class AppBuffer(BrowserBuffer):
             else:
                 handle_function()
 
+    @QtCore.pyqtSlot(list)
+    def vue_update_places(self, vue_places):
+        self.vue_places = vue_places
+
     def open_map(self):
         pass
 
     def save_map(self):
-        pass
+        if self.save_path == "":
+            self.send_input_message("Save map: ", "save_map", "file")
+        else:
+            self.handle_save_map(self.save_path)
 
     def add_new_place(self):
         self.send_input_message("Add new address: ", "add_new_place", "string")
@@ -65,12 +76,20 @@ class AppBuffer(BrowserBuffer):
         self.threads.append(thread)
         thread.start()
 
+    def handle_save_map(self, filepath):
+        self.save_path = filepath
+
+        with open(filepath, 'w') as file:
+            file.write("\n".join(list(map(lambda place_info: "#".join(place_info), self.vue_places))))
+
+        message_to_emacs("Save map to {}".format(filepath))
+
     def fetch_address_list(self, location):
         self.send_input_message("Select address to add: ", "select_address", "list",
                                 completion_list=list(map(lambda loc: "{}#{}#{}".format(loc.address, loc.longitude, loc.latitude), location)))
 
     def no_address_found(self, new_place):
-        message_to_emacs("No address match {}".formt(new_place))
+        message_to_emacs("No address match {}".format(new_place))
 
     def handle_select_address(self, address):
         address_info = address.split("#")
