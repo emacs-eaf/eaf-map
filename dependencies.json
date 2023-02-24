@@ -2,12 +2,15 @@
   "pip": {
     "linux": [
       "geopy",
+      "python-tsp"
     ],
     "win32": [
       "geopy",
+      "python-tsp"
     ],
     "darwin": [
       "geopy",
+      "python-tsp"
     ]
   },
   "vue_install": true

@@ -24,6 +24,9 @@ from PyQt6 import QtCore
 from geopy.geocoders import Nominatim
 from core.webengine import BrowserBuffer
 from core.utils import message_to_emacs
+import numpy as np
+from python_tsp.distances import great_circle_distance_matrix
+from python_tsp.exact import solve_tsp_dynamic_programming
 import os
 
 class AppBuffer(BrowserBuffer):
@@ -73,6 +76,25 @@ class AppBuffer(BrowserBuffer):
         else:
             self.send_input_message("Delete address: ", "delete_place", "list",
                                     completion_list=list(map(lambda place_info: "#".join(place_info), self.vue_places)))
+
+    def sort_places(self):
+        if len(self.vue_places) == 0:
+            message_to_emacs("No place need to sort")
+        else:
+            coords = []
+            for place in self.vue_places:
+                coords.append([float(place[1]), float(place[2])])
+
+            sources = np.array(coords)
+            distance_matrix = great_circle_distance_matrix(sources)
+
+            new_place_indexs = solve_tsp_dynamic_programming(distance_matrix)[0]
+
+            places = []
+            for index in new_place_indexs:
+                places.append(self.vue_places[index])
+
+            self.buffer_widget.eval_js_function("updatePlaces", places)
 
     def handle_add_place(self, new_place):
         message_to_emacs("Fetch address list...")

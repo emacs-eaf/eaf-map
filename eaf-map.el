@@ -95,7 +95,9 @@
     ("o"     . "open_map")
     ("s"     . "save_map")
     ("d"     . "delete_place")
-    ("a"     . "add_place"))
+    ("a"     . "add_place")
+    ("x"     . "sort_places")
+    )
   "The keybinding of EAF Vue demo."
   :type 'cons)
 
