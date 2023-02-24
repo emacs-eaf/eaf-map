@@ -18,6 +18,8 @@
        map: null,
        places: [],
        markers: [],
+       labels: [],
+       labelStyle: "background-color: #FCF3CF;border-radius: 10px; display: flex; flex-direction: column; align-items: center; height: 100%; width: 100%; border: transparent;justify-content: center;",
        polyline: null,
        currentLatitude: 39,
        currentLongitude: 104
@@ -83,6 +85,11 @@
        }
        this.markers = [];
 
+       for (let i = 0; i < this.labels.length; i++) {
+         this.map.removeLayer(this.labels[i]);
+       }
+       this.labels = [];
+
        for (let i = 0; i < places.length; i++) {
          const marker = L.marker([places[i][2], places[i][1]]).addTo(this.map);
          this.markers.push(marker);
@@ -111,6 +118,24 @@
          fetch(url)
            .then(response => response.json())
            .then(data => {
+             var legs = data.routes[0].legs;
+             var waypoints = data.waypoints;
+
+             var infos = [];
+             var info_len = waypoints.length - 1;
+             for (let i = 0; i < info_len; i++) {
+               const label = L.marker([
+                 (waypoints[i].location[1] + waypoints[i + 1].location[1]) / 2,
+                 (waypoints[i].location[0] + waypoints[i + 1].location[0]) / 2
+               ], {
+                 icon: L.divIcon({
+                   iconSize: [100, 50],
+                   html: "<div style='" + this.labelStyle + "'>" + "<div>" + (legs[i].distance / 1000).toFixed(1) + "公里" + "</div>" + "<div>" + " " + (legs[i].duration / 3600.0).toFixed(1) + "小时" + "</div>" + "</div>"
+                 })
+               }).addTo(this.map);
+               this.labels.push(label);
+             }
+
              this.polyline = new L.Polyline(polyline.decode(data.routes[0].geometry), {color: '#3DA3B4'}).addTo(this.map);
              this.map.fitBounds(this.polyline.getBounds());
            });
@@ -126,4 +151,9 @@
 </script>
 
 <style scoped>
+ ::v-deep .leaflet-div-icon {
+   background: transparent !important;
+   border: 1px solid #EDDA8F !important;
+   border-radius: 10px !important;
+ }
 </style>
