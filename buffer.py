@@ -122,11 +122,13 @@ class AppBuffer(BrowserBuffer):
         message_to_emacs("Save map to {}".format(filepath))
 
     def handle_open_map(self, filepath):
-        if os.path.exists(filepath):
+        if os.path.exists(filepath) and os.path.isfile(filepath):
             with open(filepath, "r") as file:
                 content = file.read()
                 places = list(map(lambda place_info: place_info.split("#"), content.split("\n")))
                 self.buffer_widget.eval_js_function("updatePlaces", places)
+        elif not os.path.isfile(filepath):
+            message_to_emacs("Path {} is not file".format(filepath))
         else:
             message_to_emacs("Path {} not exist, please input valid emap path.".format(filepath))
 

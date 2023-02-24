@@ -114,9 +114,14 @@
 
          const latlngsArg = latlngs.map((latlng) => latlng.lng + "," + latlng.lat).join(";")
          const url = `http://router.project-osrm.org/route/v1/car/${latlngsArg}?overview=full`;
+
+         window.pyobject.eval_emacs_function("message", ["Fetch path data..."])
+
          fetch(url)
-           .then(response => response.json())
+               .then(response => response.json())
            .then(data => {
+             window.pyobject.eval_emacs_function("message", ["Fetch path data done."])
+
              var legs = data.routes[0].legs;
              var waypoints = data.waypoints;
 
