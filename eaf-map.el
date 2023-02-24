@@ -94,7 +94,8 @@
   '(("<f12>" . "open_devtools")
     ("o"     . "open_map")
     ("s"     . "save_map")
-    ("a"     . "add_new_place"))
+    ("d"     . "delete_place")
+    ("a"     . "add_place"))
   "The keybinding of EAF Vue demo."
   :type 'cons)
 

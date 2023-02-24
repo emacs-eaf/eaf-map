@@ -64,10 +64,17 @@ class AppBuffer(BrowserBuffer):
         else:
             self.handle_save_map(self.save_path)
 
-    def add_new_place(self):
-        self.send_input_message("Add new address: ", "add_new_place", "string")
+    def add_place(self):
+        self.send_input_message("Add address: ", "add_place", "string")
 
-    def handle_add_new_place(self, new_place):
+    def delete_place(self):
+        if len(self.vue_places) == 0:
+            message_to_emacs("No place can delete.")
+        else:
+            self.send_input_message("Delete address: ", "delete_place", "list",
+                                    completion_list=list(map(lambda place_info: "#".join(place_info), self.vue_places)))
+
+    def handle_add_place(self, new_place):
         message_to_emacs("Fetch address list...")
 
         thread = FetchAddressThread(new_place)
@@ -76,6 +83,13 @@ class AppBuffer(BrowserBuffer):
 
         self.threads.append(thread)
         thread.start()
+
+    def handle_delete_place(self, delete_place):
+        places = list(map(lambda place_info: "#".join(place_info), self.vue_places))
+        places.remove(delete_place)
+
+        places = list(map(lambda place_info: place_info.split("#"), places))
+        self.buffer_widget.eval_js_function("updatePlaces", places)
 
     def handle_save_map(self, filepath):
         self.save_path = filepath
