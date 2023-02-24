@@ -164,12 +164,6 @@
 </script>
 
 <style scoped>
- ::v-deep .leaflet-div-icon {
-   background: transparent !important;
-   border: 1px solid #EDDA8F !important;
-   border-radius: 10px !important;
- }
-
  ::v-deep .place-label {
    color: #000;
    background-color: #FCF3CF;
@@ -179,8 +173,8 @@
    align-items: center;
    height: 100%;
    width: 100%;
-   border: transparent;
    justify-content: center;
+   border: 1px solid #EDDA8F !important;
  }
 
  ::v-deep .count-label {
@@ -192,7 +186,7 @@
    padding-left: 10px;
    height: 100%;
    width: 100%;
-   border: transparent;
    justify-content: center;
+   border: 1px solid #EDDA8F !important;
  }
 </style>
