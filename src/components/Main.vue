@@ -51,6 +51,7 @@
    },
    mounted() {
      window.addNewPlace = this.addNewPlace;
+     window.updatePlaces = this.updatePlaces;
 
      if (navigator.geolocation) {
        navigator.geolocation.getCurrentPosition(position => {
@@ -74,12 +75,31 @@
        }).addTo(this.map);
      },
 
+     updatePlaces(places) {
+       this.places = places;
+
+       for (let i = 0; i < this.markers.length; i++) {
+         this.map.removeLayer(this.markers[i]);
+       }
+       this.markers = [];
+
+       for (let i = 0; i < places.length; i++) {
+         const marker = L.marker([places[i][2], places[i][1]]).addTo(this.map);
+         this.markers.push(marker);
+       }
+       this.drawPaths();
+     },
+
      addNewPlace(placeName, placeLongitude, placeLatitude) {
        this.places.push([placeName, placeLongitude, placeLatitude]);
 
        const marker = L.marker([placeLatitude, placeLongitude]).addTo(this.map);
        this.markers.push(marker);
 
+       this.drawPaths();
+     },
+
+     drawPaths() {
        if (this.markers.length >= 2) {
          const latlngs = this.markers.map(marker => marker.getLatLng());
          if (this.polyline) {

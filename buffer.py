@@ -21,9 +21,10 @@
 
 from PyQt6.QtCore import QThread
 from PyQt6 import QtCore
-from core.webengine import BrowserBuffer
 from geopy.geocoders import Nominatim
+from core.webengine import BrowserBuffer
 from core.utils import message_to_emacs
+import os
 
 class AppBuffer(BrowserBuffer):
     def __init__(self, buffer_id, url, arguments):
@@ -55,7 +56,7 @@ class AppBuffer(BrowserBuffer):
         self.vue_places = vue_places
 
     def open_map(self):
-        pass
+        self.send_input_message("Open map: ", "open_map", "file")
 
     def save_map(self):
         if self.save_path == "":
@@ -83,6 +84,15 @@ class AppBuffer(BrowserBuffer):
             file.write("\n".join(list(map(lambda place_info: "#".join(place_info), self.vue_places))))
 
         message_to_emacs("Save map to {}".format(filepath))
+
+    def handle_open_map(self, filepath):
+        if os.path.exists(filepath):
+            with open(filepath, "r") as file:
+                content = file.read()
+                places = list(map(lambda place_info: place_info.split("#"), content.split("\n")))
+                self.buffer_widget.eval_js_function("updatePlaces", places)
+        else:
+            message_to_emacs("Path {} not exist, please input valid emap path.".format(filepath))
 
     def fetch_address_list(self, location):
         self.send_input_message("Select address to add: ", "select_address", "list",
