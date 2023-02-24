@@ -127,9 +127,9 @@
                const label = L.marker([(waypoints[i].location[1] + waypoints[i + 1].location[1]) / 2,
                                        (waypoints[i].location[0] + waypoints[i + 1].location[0]) / 2], {
                  icon: L.divIcon({
-                   iconSize: [100, 50],
+                   iconSize: [120, 65],
                    className: "place-label",
-                   html: "<div>" + "<div>" + (legs[i].distance / 1000).toFixed(1) + "公里" + "</div>" + "<div>" + " " + (legs[i].duration / 3600.0).toFixed(1) + "小时" + "</div>" + "</div>"
+                   html: "<div>" + "<div style='font-weight: bold;'>" + this.places[i][0].split(",")[0] + "-" + this.places[i + 1][0].split(",")[0] + "</div>" + "<div>" + (legs[i].distance / 1000).toFixed(1) + "公里" + "</div>" + "<div>" + " " + (legs[i].duration / 3600.0).toFixed(1) + "小时" + "</div>" + "</div>"
                  })
                }).addTo(this.map);
                this.labels.push(label);
@@ -141,11 +141,11 @@
              const label = L.marker(
                [waypoints[0].location[1] - 0.5, waypoints[0].location[0]], {
                   icon: L.divIcon({
-                    iconSize: [140, 50],
+                    iconSize: [140, 65],
                     className: "count-label",
-                    html: "<div>" + "<div>总里程: " + (distanceCount / 1000).toFixed(1) + "公里" + "</div>" + "<div>总耗时: " + " " + (durationCount / 3600.0).toFixed(1) + "小时" + "</div>" + "</div>"
-                 })
-               }).addTo(this.map);
+                    html: "<div>" + "<div style='font-weight: bold;'>" + "途径" + (infoLen + 1) + "个地点" + "</div>" + "<div>总里程: " + (distanceCount / 1000).toFixed(1) + "公里" + "</div>" + "<div>总耗时: " + " " + (durationCount / 3600.0).toFixed(1) + "小时" + "</div>" + "</div>"
+                  })
+             }).addTo(this.map);
              this.labels.push(label);
 
 
@@ -170,7 +170,7 @@
    border-radius: 10px;
    display: flex;
    flex-direction: column;
-   align-items: center;
+   padding-left: 10px;
    height: 100%;
    width: 100%;
    justify-content: center;
