@@ -19,15 +19,17 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from PyQt6.QtCore import QThread
-from PyQt6 import QtCore
-from geopy.geocoders import Nominatim
-from core.webengine import BrowserBuffer
-from core.utils import message_to_emacs
+import os
+
 import numpy as np
+from core.utils import message_to_emacs
+from core.webengine import BrowserBuffer
+from geopy.geocoders import Nominatim
+from PyQt6 import QtCore
+from PyQt6.QtCore import QThread
 from python_tsp.distances import great_circle_distance_matrix
 from python_tsp.exact import solve_tsp_dynamic_programming
-import os
+
 
 class AppBuffer(BrowserBuffer):
     def __init__(self, buffer_id, url, arguments):
