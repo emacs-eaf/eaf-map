@@ -22,7 +22,7 @@
 import os
 
 import numpy as np
-from core.utils import message_to_emacs
+from core.utils import *
 from core.webengine import BrowserBuffer
 from geopy.geocoders import Nominatim
 from PyQt6 import QtCore
@@ -43,6 +43,7 @@ class AppBuffer(BrowserBuffer):
 
         self.save_path = ""
 
+    @PostGui()
     def handle_input_response(self, callback_tag, result_content):
         from inspect import signature
 
