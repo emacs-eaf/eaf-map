@@ -135,10 +135,12 @@ class AppBuffer(BrowserBuffer):
         else:
             message_to_emacs("Path {} not exist, please input valid emap path.".format(filepath))
 
+    @PostGui()
     def fetch_address_list(self, location):
         self.send_input_message("Select address to add: ", "select_address", "list",
                                 completion_list=list(map(lambda loc: "{}#{}#{}".format(loc.address, loc.longitude, loc.latitude), location)))
 
+    @PostGui()
     def no_address_found(self, new_place):
         message_to_emacs("No address match {}".format(new_place))
 
