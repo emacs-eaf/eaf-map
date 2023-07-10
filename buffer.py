@@ -161,10 +161,14 @@ class FetchAddressThread(QThread):
         self.new_place = new_place
 
     def run(self):
-        geolocator = Nominatim(user_agent="eaf-map")
-        location = geolocator.geocode(self.new_place, exactly_one=False)
+        try:
+            geolocator = Nominatim(user_agent="eaf-map")
+            location = geolocator.geocode(self.new_place, exactly_one=False)
 
-        if location:
-            self.fetch_address_finish.emit(location)
-        else:
-            self.no_address_found.emit(self.new_place)
+            if location:
+                self.fetch_address_finish.emit(location)
+            else:
+                self.no_address_found.emit(self.new_place)
+        except:
+            import traceback
+            traceback.print_exc()
