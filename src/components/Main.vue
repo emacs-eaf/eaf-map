@@ -180,6 +180,7 @@
    width: 100%;
    justify-content: center;
    border: 1px solid #EDDA8F !important;
+   font-size: 10px;
  }
 
  ::v-deep .count-label {
