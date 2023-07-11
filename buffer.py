@@ -172,3 +172,4 @@ class FetchAddressThread(QThread):
         except:
             import traceback
             traceback.print_exc()
+            message_to_emacs("Fetch {} failed.".format(self.new_place))
