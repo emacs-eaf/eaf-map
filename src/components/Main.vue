@@ -157,7 +157,7 @@
                  [(waypoints[i].location[1] + waypoints[i + 1].location[1]) / 2,
                   (waypoints[i].location[0] + waypoints[i + 1].location[0]) / 2], {
                     icon: L.divIcon({
-                      iconSize: [150, 30],
+                      iconSize: [100, 16],
                       className: "distance-label",
                       html: "<div>" + "<div>" + (legs[i].distance / 1000).toFixed(1) + "公里 / " + (legs[i].duration / 3600.0).toFixed(1) + "小时" + "</div>" + "</div>"
                                                   })
@@ -211,12 +211,11 @@
    border-radius: 5px;
    display: flex;
    flex-direction: column;
-   padding-left: 10px;
    height: 100%;
    width: 100%;
    justify-content: center;
    border: 1px solid #EDDA8F !important;
-   font-size: 14px;
+   font-size: 10px;
    text-align: center;
  }
 
