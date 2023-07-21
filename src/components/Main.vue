@@ -1,7 +1,16 @@
 <template>
-  <div
-    id="mapContainer"
-    class="h-full w-full">
+  <div class="box">
+    <div
+      id="mapContainer"
+      class="h-full w-full">
+    </div>
+    <div class="total-box">
+      <div
+        v-if="totalNumber > 0"
+        class="total-panel">
+        途径{{totalNumber}}个地点, 总里程{{totalDistance}}公里， 总耗时{{totalCost}}小时
+      </div>
+    </div>
   </div>
 </template>
 
@@ -21,7 +30,10 @@
        labels: [],
        polyline: null,
        currentLatitude: 39,
-       currentLongitude: 104
+       currentLongitude: 104,
+       totalNumber: 0,
+       totalDistance: 0,
+       totalCost: 0
      };
    },
    watch: {
@@ -128,31 +140,37 @@
              var infoLen = waypoints.length - 1;
              var distanceCount = 0;
              var durationCount = 0;
-             for (let i = 0; i < infoLen; i++) {
-               const label = L.marker([(waypoints[i].location[1] + waypoints[i + 1].location[1]) / 2,
-                                       (waypoints[i].location[0] + waypoints[i + 1].location[0]) / 2], {
+             for (let i = 0; i < waypoints.length; i++) {
+               const place_index = i + 1;
+               const place_label = L.marker([waypoints[i].location[1], waypoints[i].location[0]], {
                  icon: L.divIcon({
-                   iconSize: [120, 65],
+                   iconSize: [150, 65],
                    className: "place-label",
-                   html: "<div>" + "<div style='font-weight: bold;'>" + this.places[i][0].split(",")[0] + "-" + this.places[i + 1][0].split(",")[0] + "</div>" + "<div>" + (legs[i].distance / 1000).toFixed(1) + "公里" + "</div>" + "<div>" + " " + (legs[i].duration / 3600.0).toFixed(1) + "小时" + "</div>" + "</div>"
+                   html: "<div>" + "<div style='font-weight: bold;'>" + place_index + " " + this.places[i][0].split(",")[0] + "</div>" + "</div>"
                  })
                }).addTo(this.map);
-               this.labels.push(label);
+               this.labels.push(place_label);
+             }
+
+             for (let i = 0; i < infoLen; i++) {
+               const distance_label = L.marker(
+                 [(waypoints[i].location[1] + waypoints[i + 1].location[1]) / 2,
+                  (waypoints[i].location[0] + waypoints[i + 1].location[0]) / 2], {
+                    icon: L.divIcon({
+                      iconSize: [150, 30],
+                      className: "distance-label",
+                      html: "<div>" + "<div>" + (legs[i].distance / 1000).toFixed(1) + "公里 / " + (legs[i].duration / 3600.0).toFixed(1) + "小时" + "</div>" + "</div>"
+                                                  })
+               }).addTo(this.map);
+               this.labels.push(distance_label);
 
                distanceCount += legs[i].distance;
                durationCount += legs[i].duration;
              }
 
-             const label = L.marker(
-               [waypoints[0].location[1] - 0.5, waypoints[0].location[0]], {
-                  icon: L.divIcon({
-                    iconSize: [140, 65],
-                    className: "count-label",
-                    html: "<div>" + "<div style='font-weight: bold;'>" + "途径" + (infoLen + 1) + "个地点" + "</div>" + "<div>总里程: " + (distanceCount / 1000).toFixed(1) + "公里" + "</div>" + "<div>总耗时: " + " " + (durationCount / 3600.0).toFixed(1) + "小时" + "</div>" + "</div>"
-                  })
-             }).addTo(this.map);
-             this.labels.push(label);
-
+             this.totalNumber = waypoints.length;
+             this.totalDistance = (distanceCount / 1000).toFixed(1);
+             this.totalCost = (durationCount / 3600.0).toFixed(1);
 
              this.polyline = new L.Polyline(polyline.decode(data.routes[0].geometry), {color: '#3DA3B4'}).addTo(this.map);
              this.map.fitBounds(this.polyline.getBounds());
@@ -169,10 +187,28 @@
 </script>
 
 <style scoped>
+ .box {
+   width: 100%;
+   height: 100%;
+ }
+
  ::v-deep .place-label {
    color: #333;
-   background-color: #FCF3CF;
-   border-radius: 10px;
+   display: flex;
+   flex-direction: column;
+   padding-left: 10px;
+   height: 100%;
+   width: 100%;
+   justify-content: center;
+   font-size: 16px;
+   padding-top: 40px;
+   text-align: center;
+ }
+
+ ::v-deep .distance-label {
+   color: #333;
+   background-color: #FCF3CFCC;
+   border-radius: 5px;
    display: flex;
    flex-direction: column;
    padding-left: 10px;
@@ -180,7 +216,8 @@
    width: 100%;
    justify-content: center;
    border: 1px solid #EDDA8F !important;
-   font-size: 10px;
+   font-size: 14px;
+   text-align: center;
  }
 
  ::v-deep .count-label {
@@ -194,5 +231,24 @@
    width: 100%;
    justify-content: center;
    border: 1px solid #EDDA8F !important;
+ }
+
+ .total-box {
+   position: fixed;
+   bottom: 10px;
+   width: 100%;
+   display: flex;
+   flex-direction: row;
+   align-items: center;
+   justify-content: center;
+   z-index: 100000;
+ }
+
+ .total-panel {
+   color: #333333;
+   background-color: #FFFFFFCC;
+   padding-left: 10px;
+   padding-right: 10px;
+   border-radius: 5px;
  }
 </style>
