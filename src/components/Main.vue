@@ -141,12 +141,18 @@
              var distanceCount = 0;
              var durationCount = 0;
              for (let i = 0; i < waypoints.length; i++) {
+               const place_name = this.places[i][0].split(",")[0];
+
+               if (i === waypoints.length - 1 && place_name === this.places[0][0].split(",")[0]) {
+                 continue;
+               }
+
                const place_index = i + 1;
                const place_label = L.marker([waypoints[i].location[1], waypoints[i].location[0]], {
                  icon: L.divIcon({
                    iconSize: [150, 65],
                    className: "place-label",
-                   html: "<div>" + "<div style='font-weight: bold;'>" + place_index + " " + this.places[i][0].split(",")[0] + "</div>" + "</div>"
+                   html: "<div>" + "<div style='font-weight: bold;'>" + place_index + " " + place_name + "</div>" + "</div>"
                  })
                }).addTo(this.map);
                this.labels.push(place_label);
