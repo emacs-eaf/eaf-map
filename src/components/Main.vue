@@ -141,25 +141,26 @@
              var distanceCount = 0;
              var durationCount = 0;
              for (let i = 0; i < waypoints.length; i++) {
-               const place_name = this.places[i][0].split(",")[0];
+               const placeName = this.places[i][0].split(",")[0];
 
-               if (i === waypoints.length - 1 && place_name === this.places[0][0].split(",")[0]) {
+               /* Don't show marker if last place is same as first place */
+               if (i === waypoints.length - 1 && placeName === this.places[0][0].split(",")[0]) {
                  continue;
                }
 
-               const place_index = i + 1;
-               const place_label = L.marker([waypoints[i].location[1], waypoints[i].location[0]], {
+               const placeIndex = i + 1;
+               const placeLabel = L.marker([waypoints[i].location[1], waypoints[i].location[0]], {
                  icon: L.divIcon({
                    iconSize: [150, 65],
                    className: "place-label",
-                   html: "<div>" + "<div style='font-weight: bold;'>" + place_index + " " + place_name + "</div>" + "</div>"
+                   html: "<div>" + "<div style='font-weight: bold;'>" + placeIndex + " " + placeName + "</div>" + "</div>"
                  })
                }).addTo(this.map);
-               this.labels.push(place_label);
+               this.labels.push(placeLabel);
              }
 
              for (let i = 0; i < infoLen; i++) {
-               const distance_label = L.marker(
+               const distanceLabel = L.marker(
                  [(waypoints[i].location[1] + waypoints[i + 1].location[1]) / 2,
                   (waypoints[i].location[0] + waypoints[i + 1].location[0]) / 2], {
                     icon: L.divIcon({
@@ -168,7 +169,7 @@
                       html: "<div>" + "<div>" + (legs[i].distance / 1000).toFixed(1) + "公里 / " + (legs[i].duration / 3600.0).toFixed(1) + "小时" + "</div>" + "</div>"
                                                   })
                }).addTo(this.map);
-               this.labels.push(distance_label);
+               this.labels.push(distanceLabel);
 
                distanceCount += legs[i].distance;
                durationCount += legs[i].duration;
@@ -206,7 +207,7 @@
    height: 100%;
    width: 100%;
    justify-content: center;
-   font-size: 16px;
+   font-size: 14px;
    padding-top: 40px;
    text-align: center;
  }
