@@ -150,6 +150,10 @@ class AppBuffer(BrowserBuffer):
 
         self.buffer_widget.eval_js_function("addNewPlace", address_info[0], address_info[1], address_info[2])
 
+    @QtCore.pyqtSlot(str)
+    def send_message_to_emacs(self, message):
+        message_to_emacs(message)
+
 class FetchAddressThread(QThread):
 
     fetch_address_finish = QtCore.pyqtSignal(list)

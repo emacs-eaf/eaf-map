@@ -25,4 +25,5 @@ This repository provides the EAF OpenStreetMap application for the [Emacs Applic
 | `x` | sort_places |
 | `o` | open_map |
 | `s` | save_map |
+| `t` | js_toggle_distance_tip |
 

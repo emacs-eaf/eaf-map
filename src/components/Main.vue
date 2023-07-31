@@ -28,7 +28,9 @@
        places: [],
        markers: [],
        labels: [],
+       distanceLabels: [],
        polyline: null,
+       showDistanceTip: false,
        currentLatitude: 39,
        currentLongitude: 104,
        totalNumber: 0,
@@ -65,6 +67,7 @@
    mounted() {
      window.addNewPlace = this.addNewPlace;
      window.updatePlaces = this.updatePlaces;
+     window.toggleDistanceTip = this.toggleDistanceTip;
 
      if (navigator.geolocation) {
        navigator.geolocation.getCurrentPosition(position => {
@@ -96,10 +99,9 @@
        }
        this.markers = [];
 
-       for (let i = 0; i < this.labels.length; i++) {
-         this.map.removeLayer(this.labels[i]);
-       }
-       this.labels = [];
+       this.cleanLabels();
+
+       this.cleanDistanceLabels();
 
        for (let i = 0; i < places.length; i++) {
          const marker = L.marker([places[i][2], places[i][1]]).addTo(this.map);
@@ -117,6 +119,50 @@
        this.drawPaths();
      },
 
+     cleanLabels() {
+       for (let i = 0; i < this.labels.length; i++) {
+         this.map.removeLayer(this.labels[i]);
+       }
+       this.labels = [];
+     },
+
+     cleanDistanceLabels() {
+       for (let i = 0; i < this.distanceLabels.length; i++) {
+         this.map.removeLayer(this.distanceLabels[i]);
+       }
+       this.distanceLabels = [];
+     },
+
+     toggleDistanceTip() {
+       this.cleanDistanceLabels();
+
+       this.showDistanceTip = !this.showDistanceTip;
+       this.drawDistancelabels();
+
+       if (this.showDistanceTip === true) {
+         window.pyobject.send_message_to_emacs("Show distance labels");
+       } else {
+         window.pyobject.send_message_to_emacs("Hide distance labels");
+       }
+     },
+
+     drawDistancelabels() {
+       if (this.showDistanceTip === true) {
+         for (let i = 0; i < this.infoLen; i++) {
+           const distanceLabel = L.marker(
+             [(this.waypoints[i].location[1] + this.waypoints[i + 1].location[1]) / 2,
+              (this.waypoints[i].location[0] + this.waypoints[i + 1].location[0]) / 2], {
+                icon: L.divIcon({
+                  iconSize: [100, 16],
+                  className: "distance-label",
+                  html: "<div>" + "<div>" + (this.legs[i].distance / 1000).toFixed(1) + "公里 / " + (this.legs[i].duration / 3600.0).toFixed(1) + "小时" + "</div>" + "</div>"
+                })
+           }).addTo(this.map);
+           this.distanceLabels.push(distanceLabel);
+         }
+       }
+     },
+
      drawPaths() {
        if (this.markers.length >= 2) {
          const latlngs = this.markers.map(marker => marker.getLatLng());
@@ -131,57 +177,48 @@
 
          fetch(url)
                .then(response => response.json())
-           .then(data => {
-             window.pyobject.eval_emacs_function("message", ["Fetch path data done."])
+               .then(data => {
+                 window.pyobject.eval_emacs_function("message", ["Fetch path data done."])
 
-             var legs = data.routes[0].legs;
-             var waypoints = data.waypoints;
+                 this.legs = data.routes[0].legs;
+                 this.waypoints = data.waypoints;
+                 this.infoLen = this.waypoints.length - 1;
 
-             var infoLen = waypoints.length - 1;
-             var distanceCount = 0;
-             var durationCount = 0;
-             for (let i = 0; i < waypoints.length; i++) {
-               const placeName = this.places[i][0].split(",")[0];
+                 var distanceCount = 0;
+                 var durationCount = 0;
+                 for (let i = 0; i < this.waypoints.length; i++) {
+                   const placeName = this.places[i][0].split(",")[0];
 
-               /* Don't show marker if last place is same as first place */
-               if (i === waypoints.length - 1 && placeName === this.places[0][0].split(",")[0]) {
-                 continue;
-               }
+                   /* Don't show marker if last place is same as first place */
+                   if (i === this.waypoints.length - 1 && placeName === this.places[0][0].split(",")[0]) {
+                     continue;
+                   }
 
-               const placeIndex = i + 1;
-               const placeLabel = L.marker([waypoints[i].location[1], waypoints[i].location[0]], {
-                 icon: L.divIcon({
-                   iconSize: [150, 65],
-                   className: "place-label",
-                   html: "<div>" + "<div style='font-weight: bold;'>" + placeIndex + " " + placeName + "</div>" + "</div>"
-                 })
-               }).addTo(this.map);
-               this.labels.push(placeLabel);
-             }
+                   const placeIndex = i + 1;
+                   const placeLabel = L.marker([this.waypoints[i].location[1], this.waypoints[i].location[0]], {
+                     icon: L.divIcon({
+                       iconSize: [150, 65],
+                       className: "place-label",
+                       html: "<div>" + "<div style='font-weight: bold;'>" + placeIndex + " " + placeName + "</div>" + "</div>"
+                     })
+                   }).addTo(this.map);
+                   this.labels.push(placeLabel);
+                 }
 
-             for (let i = 0; i < infoLen; i++) {
-               const distanceLabel = L.marker(
-                 [(waypoints[i].location[1] + waypoints[i + 1].location[1]) / 2,
-                  (waypoints[i].location[0] + waypoints[i + 1].location[0]) / 2], {
-                    icon: L.divIcon({
-                      iconSize: [100, 16],
-                      className: "distance-label",
-                      html: "<div>" + "<div>" + (legs[i].distance / 1000).toFixed(1) + "公里 / " + (legs[i].duration / 3600.0).toFixed(1) + "小时" + "</div>" + "</div>"
-                                                  })
-               }).addTo(this.map);
-               this.labels.push(distanceLabel);
+                 this.drawDistancelabels();
 
-               distanceCount += legs[i].distance;
-               durationCount += legs[i].duration;
-             }
+                 for (let i = 0; i < this.infoLen; i++) {
+                   distanceCount += this.legs[i].distance;
+                   durationCount += this.legs[i].duration;
+                 }
 
-             this.totalNumber = waypoints.length;
-             this.totalDistance = (distanceCount / 1000).toFixed(1);
-             this.totalCost = (durationCount / 3600.0).toFixed(1);
+                 this.totalNumber = this.waypoints.length;
+                 this.totalDistance = (distanceCount / 1000).toFixed(1);
+                 this.totalCost = (durationCount / 3600.0).toFixed(1);
 
-             this.polyline = new L.Polyline(polyline.decode(data.routes[0].geometry), {color: '#3DA3B4'}).addTo(this.map);
-             this.map.fitBounds(this.polyline.getBounds());
-           });
+                 this.polyline = new L.Polyline(polyline.decode(data.routes[0].geometry), {color: '#3DA3B4'}).addTo(this.map);
+                 this.map.fitBounds(this.polyline.getBounds());
+               });
        }
      }
    },
