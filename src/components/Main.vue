@@ -190,7 +190,7 @@
                    const placeName = this.places[i][0].split(",")[0];
 
                    /* Don't show marker if last place is same as first place */
-                   if (i === this.waypoints.length - 1 && placeName === this.places[0][0].split(",")[0]) {
+                   if (i === this.waypoints.length - 1 && this.places[i][0] === this.places[0][0]) {
                      continue;
                    }
 
