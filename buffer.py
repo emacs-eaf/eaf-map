@@ -43,6 +43,11 @@ class AppBuffer(BrowserBuffer):
 
         self.save_path = ""
 
+        self.marker_icon_path = os.path.join(os.path.dirname(__file__), "src", "images", "marker.png")
+
+    def init_app(self):
+        self.buffer_widget.eval_js_function("initMap", self.marker_icon_path)
+
     @PostGui()
     def handle_input_response(self, callback_tag, result_content):
         from inspect import signature

@@ -52,36 +52,32 @@
      new QWebChannel(qt.webChannelTransport, channel => {
        window.pyobject = channel.objects.pyobject;
      });
-
-     L.Marker.prototype.options.icon = L.icon({
-       iconRetinaUrl: require("leaflet/dist/images/marker-icon-2x.png"),
-       iconUrl: require("leaflet/dist/images/marker-icon.png"),
-       shadowUrl: require("leaflet/dist/images/marker-shadow.png"),
-       iconSize: [25, 41],
-       iconAnchor: [12, 41],
-       popupAnchor: [1, -34],
-       tooltipAnchor: [16, -28],
-       shadowSize: [41, 41],
-     });
    },
    mounted() {
+     window.initMap = this.initMap;
      window.addNewPlace = this.addNewPlace;
      window.updatePlaces = this.updatePlaces;
      window.toggleDistanceTip = this.toggleDistanceTip;
-
-     if (navigator.geolocation) {
-       navigator.geolocation.getCurrentPosition(position => {
-         this.currentLatitude = position.coords.latitude;
-         this.currentLongitude = position.coords.longitude;
-       });
-
-       this.initMap();
-     } else {
-       this.initMap();
-     }
    },
    methods: {
-     initMap() {
+     initMap(markerIconPath) {
+       L.Marker.prototype.options.icon = L.icon({
+         iconRetinaUrl: markerIconPath,
+         iconUrl: markerIconPath,
+         iconSize: [25, 18],
+         iconAnchor: [12, 10],
+         popupAnchor: [1, -34],
+         tooltipAnchor: [16, -28],
+         shadowSize: [41, 41],
+       });
+
+       if (navigator.geolocation) {
+         navigator.geolocation.getCurrentPosition(position => {
+           this.currentLatitude = position.coords.latitude;
+           this.currentLongitude = position.coords.longitude;
+         });
+       }
+
        this.map = L.map("mapContainer", {
          attributionControl: false,
          zoomControl: false
@@ -104,7 +100,7 @@
        this.cleanDistanceLabels();
 
        for (let i = 0; i < places.length; i++) {
-         const marker = L.marker([places[i][2], places[i][1]]).addTo(this.map);
+         const marker = this.buildMarker(places[i][2], places[i][1]);
          this.markers.push(marker);
        }
        this.drawPaths();
@@ -113,10 +109,15 @@
      addNewPlace(placeName, placeLongitude, placeLatitude) {
        this.places.push([placeName, placeLongitude, placeLatitude]);
 
-       const marker = L.marker([placeLatitude, placeLongitude]).addTo(this.map);
+       const marker = this.buildMarker(placeLatitude, placeLongitude);
        this.markers.push(marker);
 
        this.drawPaths();
+     },
+
+     buildMarker(placeLatitude, placeLongitude) {
+       const marker = L.marker([placeLatitude, placeLongitude]).addTo(this.map);
+       return marker;
      },
 
      cleanLabels() {
