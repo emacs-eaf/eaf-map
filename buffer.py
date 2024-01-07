@@ -20,11 +20,12 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
+import json
+import urllib
 
 import numpy as np
 from core.utils import *
 from core.webengine import BrowserBuffer
-from geopy.geocoders import Nominatim
 from PyQt6 import QtCore
 from PyQt6.QtCore import QThread
 from python_tsp.distances import great_circle_distance_matrix
@@ -143,7 +144,7 @@ class AppBuffer(BrowserBuffer):
     @PostGui()
     def fetch_address_list(self, location):
         self.send_input_message("Select address to add: ", "select_address", "list",
-                                completion_list=list(map(lambda loc: "{}#{}#{}".format(loc.address, loc.longitude, loc.latitude), location)))
+                                completion_list=list(map(lambda loc: "{}#{}#{}".format(loc["display_name"], loc["lon"], loc["lat"]), location)))
 
     @PostGui()
     def no_address_found(self, new_place):
@@ -169,15 +170,35 @@ class FetchAddressThread(QThread):
 
         self.new_place = new_place
 
+    def fetch_url(self, url):
+        import pycurl
+        from io import BytesIO
+
+        buffer = BytesIO()
+
+        c = pycurl.Curl()
+        c.setopt(c.URL, url)
+
+        c.setopt(c.WRITEDATA, buffer)
+        c.perform()
+        c.close()
+
+        body = buffer.getvalue()
+        content = body.decode('utf-8')
+
+        try:
+            return json.loads(content)
+        except:
+            return []
+
     def run(self):
         try:
-            geolocator = Nominatim(user_agent="eaf-map")
-            location = geolocator.geocode(self.new_place, exactly_one=False)
+            location = self.fetch_url('https://nominatim.openstreetmap.org/search.php?q={}&format=jsonv2'.format(urllib.parse.quote(self.new_place)))
 
-            if location:
-                self.fetch_address_finish.emit(location)
-            else:
+            if len(location) == 0:
                 self.no_address_found.emit(self.new_place)
+            else:
+                self.fetch_address_finish.emit(location)
         except:
             import traceback
             traceback.print_exc()
