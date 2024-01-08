@@ -142,9 +142,9 @@ class AppBuffer(BrowserBuffer):
             message_to_emacs("Path {} not exist, please input valid emap path.".format(filepath))
 
     @PostGui()
-    def fetch_address_list(self, location):
+    def fetch_address_list(self, locations):
         self.send_input_message("Select address to add: ", "select_address", "list",
-                                completion_list=list(map(lambda loc: "{}#{}#{}".format(loc["display_name"], loc["lon"], loc["lat"]), location)))
+                                completion_list=list(map(lambda loc: "{}#{}#{}".format(loc["display_name"], loc["lon"], loc["lat"]), locations)))
 
     @PostGui()
     def no_address_found(self, new_place):
@@ -170,35 +170,63 @@ class FetchAddressThread(QThread):
 
         self.new_place = new_place
 
-    def fetch_url(self, url):
-        import pycurl
-        from io import BytesIO
+    def fetch_locations(self):
+        gaode_api_key_path = os.path.expanduser("~/.emacs.d/eaf/map/gaode_api_key.txt")
+        gaode_api_key = ""
+        if os.path.exists(gaode_api_key_path):
+            with open(gaode_api_key_path) as f:
+                gaode_api_key = f.read().strip()
 
-        buffer = BytesIO()
+        if gaode_api_key != "":
+            import requests
+            import json
 
-        c = pycurl.Curl()
-        c.setopt(c.URL, url)
+            url = 'https://restapi.amap.com/v3/geocode/geo'
+            params = { 'key': gaode_api_key, 'address': self.new_place}
+            res = requests.get(url, params)
+            content =  json.loads(res.text)
 
-        c.setopt(c.WRITEDATA, buffer)
-        c.perform()
-        c.close()
+            if content["status"] == "1":
+                geocodes = content["geocodes"]
+                locations = list(map(lambda geocode: {
+                    "display_name": geocode["formatted_address"],
+                    "lon": geocode["location"].split(",")[0],
+                    "lat": geocode["location"].split(",")[1]
+                }, geocodes))
+                return locations
+            else:
+                return []
+        else:
+            import pycurl
+            from io import BytesIO
 
-        body = buffer.getvalue()
-        content = body.decode('utf-8')
+            url = 'https://nominatim.openstreetmap.org/search.php?q={}&format=jsonv2'.format(urllib.parse.quote(self.new_place))
 
-        try:
-            return json.loads(content)
-        except:
-            return []
+            buffer = BytesIO()
+
+            c = pycurl.Curl()
+            c.setopt(c.URL, url)
+
+            c.setopt(c.WRITEDATA, buffer)
+            c.perform()
+            c.close()
+
+            body = buffer.getvalue()
+            content = body.decode('utf-8')
+
+            try:
+                return json.loads(content)
+            except:
+                return []
 
     def run(self):
         try:
-            location = self.fetch_url('https://nominatim.openstreetmap.org/search.php?q={}&format=jsonv2'.format(urllib.parse.quote(self.new_place)))
+            locations = self.fetch_locations()
 
-            if len(location) == 0:
+            if len(locations) == 0:
                 self.no_address_found.emit(self.new_place)
             else:
-                self.fetch_address_finish.emit(location)
+                self.fetch_address_finish.emit(locations)
         except:
             import traceback
             traceback.print_exc()

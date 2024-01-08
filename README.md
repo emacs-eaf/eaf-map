@@ -27,3 +27,5 @@ This repository provides the EAF OpenStreetMap application for the [Emacs Applic
 | `s` | save_map |
 | `t` | js_toggle_distance_tip |
 
+### Gaode Map API
+If you have [Gaode Map API Key](https://lbs.amap.com), put fill key in ```~/.emacs.d/eaf/map/gaode_api_key.txt```, then eaf-map will use Gaode API instead OpenStreetMap API, API's response is much faster in China.
