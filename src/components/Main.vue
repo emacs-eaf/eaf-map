@@ -200,7 +200,7 @@
                      icon: L.divIcon({
                        iconSize: [150, 65],
                        className: "place-label",
-                       html: "<div>" + "<div style='font-weight: bold;'>" + placeIndex + " " + placeName + "</div>" + "</div>"
+                       html: "<div>" + "<div style='text-shadow: 0 0 0.2em #F8FE29, 0 0 0.2em #F8FE29, 0 0 0.2em #F8FE29'>" + placeIndex + " " + placeName + "</div>" + "</div>"
                      })
                    }).addTo(this.map);
                    this.labels.push(placeLabel);
@@ -217,7 +217,7 @@
                  this.totalDistance = (distanceCount / 1000).toFixed(1);
                  this.totalCost = (durationCount / 3600.0).toFixed(1);
 
-                 this.polyline = new L.Polyline(polyline.decode(data.routes[0].geometry), {color: '#3DA3B4'}).addTo(this.map);
+                 this.polyline = new L.Polyline(polyline.decode(data.routes[0].geometry), {color: '#3DB3D0'}).addTo(this.map);
                  this.map.fitBounds(this.polyline.getBounds());
                });
        }
