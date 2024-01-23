@@ -141,7 +141,9 @@ class AppBuffer(BrowserBuffer):
             self.map_path = filepath
             with open(filepath, "r") as file:
                 content = file.read()
-                places = list(map(lambda place_info: place_info.split("#"), content.split("\n")))
+                places = list(filter(lambda place: place != [''],
+                                     list(map(lambda place_info: place_info.split("#"), content.split("\n")))
+                                     ))
                 self.buffer_widget.eval_js_function("updatePlaces", places)
         elif not os.path.isfile(filepath):
             message_to_emacs("Path {} is not file".format(filepath))
