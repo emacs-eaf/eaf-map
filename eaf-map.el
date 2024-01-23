@@ -97,6 +97,7 @@
     ("x"     . "sort_places")
     ("o"     . "open_map")
     ("s"     . "save_map")
+    ("r"     . "reload_map")
     ("t"     . "js_toggle_distance_tip")
     )
   "The keybinding of EAF Vue demo."

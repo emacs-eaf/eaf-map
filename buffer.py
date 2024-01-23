@@ -20,7 +20,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
-import json
 import urllib
 
 import numpy as np
@@ -42,7 +41,7 @@ class AppBuffer(BrowserBuffer):
 
         self.vue_places = []
 
-        self.save_path = ""
+        self.map_path = ""
 
         self.marker_icon_path = os.path.join(os.path.dirname(__file__), "src", "images", "marker.png")
 
@@ -70,11 +69,18 @@ class AppBuffer(BrowserBuffer):
     def open_map(self):
         self.send_input_message("Open map: ", "open_map", "file")
 
+    def reload_map(self):
+        if os.path.exists(self.map_path):
+            self.handle_open_map(self.map_path)
+            message_to_emacs("Reload map successful.")
+        else:
+            self.open_map()
+
     def save_map(self):
-        if self.save_path == "":
+        if self.map_path == "":
             self.send_input_message("Save map: ", "save_map", "file")
         else:
-            self.handle_save_map(self.save_path)
+            self.handle_save_map(self.map_path)
 
     def add_place(self):
         self.send_input_message("Add address: ", "add_place", "string")
@@ -123,7 +129,7 @@ class AppBuffer(BrowserBuffer):
         self.buffer_widget.eval_js_function("updatePlaces", places)
 
     def handle_save_map(self, filepath):
-        self.save_path = filepath
+        self.map_path = filepath
 
         with open(filepath, 'w') as file:
             file.write("\n".join(list(map(lambda place_info: "#".join(place_info), self.vue_places))))
@@ -132,6 +138,7 @@ class AppBuffer(BrowserBuffer):
 
     def handle_open_map(self, filepath):
         if os.path.exists(filepath) and os.path.isfile(filepath):
+            self.map_path = filepath
             with open(filepath, "r") as file:
                 content = file.read()
                 places = list(map(lambda place_info: place_info.split("#"), content.split("\n")))

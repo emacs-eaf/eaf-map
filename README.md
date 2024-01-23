@@ -15,6 +15,9 @@ This repository provides the EAF OpenStreetMap application for the [Emacs Applic
 (require 'eaf-map)
 ```
 
+### Gaode Map API
+If you have [Gaode Map API Key](https://lbs.amap.com), put fill key in ```~/.emacs.d/eaf/map/gaode_api_key.txt```, then eaf-map will use Gaode API instead OpenStreetMap API, API's response is much faster in China.
+
 ### The keybinding of EAF Vue demo.
 
 | Key   | Event   |
@@ -25,7 +28,6 @@ This repository provides the EAF OpenStreetMap application for the [Emacs Applic
 | `x` | sort_places |
 | `o` | open_map |
 | `s` | save_map |
+| `r` | reload_map |
 | `t` | js_toggle_distance_tip |
 
-### Gaode Map API
-If you have [Gaode Map API Key](https://lbs.amap.com), put fill key in ```~/.emacs.d/eaf/map/gaode_api_key.txt```, then eaf-map will use Gaode API instead OpenStreetMap API, API's response is much faster in China.
