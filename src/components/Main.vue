@@ -58,6 +58,12 @@
      window.addNewPlace = this.addNewPlace;
      window.updatePlaces = this.updatePlaces;
      window.toggleDistanceTip = this.toggleDistanceTip;
+     window.zoomIn = this.zoomIn;
+     window.zoomOut = this.zoomOut;
+     window.moveUp = this.moveUp;
+     window.moveDown = this.moveDown;
+     window.moveLeft = this.moveLeft;
+     window.moveRight = this.moveRight;
    },
    methods: {
      initMap(markerIconPath) {
@@ -113,6 +119,50 @@
        this.markers.push(marker);
 
        this.drawPaths();
+     },
+
+     zoomIn() {
+       if (this.map) {
+         this.map.zoomIn();
+       }
+     },
+
+     zoomOut() {
+       if (this.map) {
+         this.map.zoomOut();
+       }
+     },
+
+     moveUp() {
+       if (this.map) {
+         const currentCenter = this.map.getCenter();
+         const newCenter = [currentCenter.lat - 1, currentCenter.lng];
+         this.map.panTo(newCenter);
+       }
+     },
+
+     moveDown() {
+       if (this.map) {
+         const currentCenter = this.map.getCenter();
+         const newCenter = [currentCenter.lat + 1, currentCenter.lng];
+         this.map.panTo(newCenter);
+       }
+     },
+
+     moveLeft() {
+       if (this.map) {
+         const currentCenter = this.map.getCenter();
+         const newCenter = [currentCenter.lat, currentCenter.lng - 1];
+         this.map.panTo(newCenter);
+       }
+     },
+
+     moveRight() {
+       if (this.map) {
+         const currentCenter = this.map.getCenter();
+         const newCenter = [currentCenter.lat, currentCenter.lng + 1];
+         this.map.panTo(newCenter);
+       }
      },
 
      buildMarker(placeLatitude, placeLongitude) {

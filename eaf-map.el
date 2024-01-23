@@ -1,7 +1,7 @@
-;;; eaf-map.el --- Vue demo
+;;; eaf-map.el --- EAF Map
 
 ;; Filename: eaf-map.el
-;; Description: Vue demo
+;; Description: EAF Map
 ;; Author: Andy Stewart <lazycat.manatee@gmail.com>
 ;; Maintainer: Andy Stewart <lazycat.manatee@gmail.com>
 ;; Copyright (C) 2021, Andy Stewart, all rights reserved.
@@ -39,7 +39,7 @@
 
 ;;; Commentary:
 ;;
-;; Vue demo
+;; EAF Map
 ;;
 
 ;;; Installation:
@@ -99,8 +99,14 @@
     ("s"     . "save_map")
     ("r"     . "reload_map")
     ("t"     . "js_toggle_distance_tip")
+    ("-"     . "js_zoom_out")
+    ("="     . "js_zoom_in")
+    ("j"     . "js_move_up")
+    ("k"     . "js_move_down")
+    ("h"     . "js_move_left")
+    ("l"     . "js_move_right")
     )
-  "The keybinding of EAF Vue demo."
+  "The keybinding of EAF EAF Map."
   :type 'cons)
 
 (add-to-list 'eaf-app-binding-alist '("map" . eaf-map-keybinding))
