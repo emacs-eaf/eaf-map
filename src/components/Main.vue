@@ -112,11 +112,18 @@
        this.drawPaths();
      },
 
-     addNewPlace(placeName, placeLongitude, placeLatitude) {
-       this.places.push([placeName, placeLongitude, placeLatitude]);
+     addNewPlace(placeName, placeLongitude, placeLatitude, order) {
+       if (order == -1) {
+         this.places.push([placeName, placeLongitude, placeLatitude]);
 
-       const marker = this.buildMarker(placeLatitude, placeLongitude);
-       this.markers.push(marker);
+         const marker = this.buildMarker(placeLatitude, placeLongitude);
+         this.markers.push(marker);
+       } else {
+         this.places.splice(order, 0, [placeName, placeLongitude, placeLatitude]);
+
+         const marker = this.buildMarker(placeLatitude, placeLongitude);
+         this.markers.splice(order, 0, marker);
+       }
 
        this.drawPaths();
      },

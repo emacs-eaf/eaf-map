@@ -160,10 +160,20 @@ class AppBuffer(BrowserBuffer):
         message_to_emacs("No address match {}".format(new_place))
 
     def handle_select_address(self, address):
+        if len(self.vue_places) <= 1:
+            self.add_address(address)
+        else:
+            self.select_address = address
+            self.send_input_message("Insert place after number (1 - {}): ".format(len(self.vue_places)), "select_insert_order", "string")
+
+    def handle_select_insert_order(self, order):
+        self.add_address(self.select_address, int(order))
+
+    def add_address(self, address, order=-1):
         address_info = address.split("#")
         message_to_emacs("Add new place: {}".format(address_info[0]))
 
-        self.buffer_widget.eval_js_function("addNewPlace", address_info[0], address_info[1], address_info[2])
+        self.buffer_widget.eval_js_function("addNewPlace", address_info[0], address_info[1], address_info[2], order)
 
     @QtCore.pyqtSlot(str)
     def send_message_to_emacs(self, message):
