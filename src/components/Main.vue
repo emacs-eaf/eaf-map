@@ -125,7 +125,7 @@
          this.markers.splice(order, 0, marker);
        }
 
-       this.drawPaths();
+       this.updatePlaces(this.places);
      },
 
      zoomIn() {
