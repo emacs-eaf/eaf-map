@@ -20,6 +20,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
+import json
 import urllib
 
 import numpy as np
@@ -198,7 +199,6 @@ class FetchAddressThread(QThread):
 
         if gaode_api_key != "":
             import requests
-            import json
 
             url = 'https://restapi.amap.com/v3/geocode/geo'
             params = { 'key': gaode_api_key, 'address': self.new_place}
