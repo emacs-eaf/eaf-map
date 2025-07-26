@@ -168,7 +168,11 @@ class AppBuffer(BrowserBuffer):
             self.send_input_message("Insert place after number (1 - {}): ".format(len(self.vue_places)), "select_insert_order", "string")
 
     def handle_select_insert_order(self, order):
-        self.add_address(self.select_address, int(order))
+        if order == "":
+            insert_order = -1
+        else:
+            insert_order = int(order)
+        self.add_address(self.select_address, insert_order)
 
     def add_address(self, address, order=-1):
         address_info = address.split("#")
